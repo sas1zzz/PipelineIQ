@@ -33,6 +33,36 @@ services:
 
 
   # ==========================================================
+  # FASTAPI BACKEND + DASHBOARD
+  # ==========================================================
+
+  backend:
+    build:
+      context: .
+
+      dockerfile: backend/Dockerfile
+
+    container_name: pipelineiq-backend
+
+    restart: unless-stopped
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+
+    ports:
+      - "8000:8000"
+
+
+  # ==========================================================
   # AIRFLOW
   # ==========================================================
 
@@ -41,6 +71,7 @@ services:
       context: ./airflow
 
     container_name: pipelineiq-airflow
+
     restart: unless-stopped
 
     depends_on:
@@ -50,7 +81,6 @@ services:
     environment:
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
 
-      # Pipeline database connection
       PIPELINE_DB_HOST: postgres
       PIPELINE_DB_PORT: "5432"
       PIPELINE_DB_NAME: ${POSTGRES_DB}
