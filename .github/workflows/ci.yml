@@ -1,0 +1,57 @@
+﻿name: PipelineIQ CI
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      JWT_SECRET: pipelineiq-ci-test-secret
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: pipelineiq
+      POSTGRES_USER: pipelineiq_user
+      POSTGRES_PASSWORD: ci-test-password
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            requirements-dev.txt
+
+      - name: Install backend dependencies
+        run: python -m pip install -r backend/requirements.txt
+
+      - name: Install test dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Compile Python files
+        run: |
+          python -m py_compile backend/app/database.py
+          python -m py_compile backend/app/models.py
+          python -m py_compile backend/app/schemas.py
+          python -m py_compile backend/app/auth.py
+          python -m py_compile backend/app/pipeline_runs.py
+          python -m py_compile backend/app/weather.py
+          python -m py_compile backend/app/main.py
+
+      - name: Run tests
+        run: python -m pytest tests -q
