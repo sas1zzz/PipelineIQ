@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PipelineIQ Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <header class="topbar">
+        <div>
+            <h1>PipelineIQ</h1>
+            <p>Weather Data Pipeline Dashboard</p>
+        </div>
+
+        <button id="refreshBtn">Refresh</button>
+    </header>
+
+    <main class="container">
+
+        <section class="cards">
+            <div class="card">
+                <span>Locations</span>
+                <strong id="locationCount">0</strong>
+            </div>
+
+            <div class="card">
+                <span>Weather Records</span>
+                <strong id="weatherCount">0</strong>
+            </div>
+
+            <div class="card">
+                <span>Last Pipeline</span>
+                <strong id="pipelineStatus">Loading...</strong>
+            </div>
+
+            <div class="card">
+                <span>Records Processed</span>
+                <strong id="recordsProcessed">0</strong>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h2>Latest Weather</h2>
+                <span id="weatherUpdated">Loading...</span>
+            </div>
+
+            <div id="weatherTable" class="table-wrapper">
+                Loading weather data...
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h2>Pipeline History</h2>
+            </div>
+
+            <div id="pipelineTable" class="table-wrapper">
+                Loading pipeline history...
+            </div>
+        </section>
+
+        <div id="errorBox" class="error hidden"></div>
+
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

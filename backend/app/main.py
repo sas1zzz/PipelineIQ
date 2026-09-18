@@ -1,5 +1,10 @@
+from pathlib import Path
+
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from sqlalchemy import select, text
+
+from fastapi.staticfiles import StaticFiles
 
 from backend.app.auth import router as auth_router
 from backend.app.database import SessionLocal, engine
@@ -14,6 +19,14 @@ app = FastAPI(
     description="Backend API for the PipelineIQ data pipeline dashboard",
     version="0.1.0",
 )
+
+
+# ============================================================
+# PATHS
+# ============================================================
+
+BASE_DIR = Path(__file__).resolve().parents[2]
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 
 # ============================================================
@@ -81,21 +94,29 @@ def create_location(location_data: LocationCreate):
 
 
 # ============================================================
-# WEATHER APIs
+# API ROUTERS
 # ============================================================
 
 app.include_router(weather_router)
 
-
-# ============================================================
-# PIPELINE RUN APIs
-# ============================================================
-
 app.include_router(pipeline_runs_router)
 
-
-# ============================================================
-# AUTHENTICATION APIs
-# ============================================================
-
 app.include_router(auth_router)
+
+
+# ============================================================
+# FRONTEND
+# ============================================================
+
+app.mount(
+    "/static",
+    StaticFiles(directory=FRONTEND_DIR),
+    name="static",
+)
+
+
+@app.get("/", include_in_schema=False)
+def frontend():
+    return FileResponse(
+        FRONTEND_DIR / "index.html"
+    )
