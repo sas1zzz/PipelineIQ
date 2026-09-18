@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import (
     DateTime,
@@ -7,6 +7,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    text,
 )
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -28,19 +29,24 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(
         Integer,
-        primary_key=True
+        primary_key=True,
     )
 
     email: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
-        unique=True
+        unique=True,
+    )
+
+    password_hash: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
     )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
-        default=datetime.utcnow
+        server_default=text("CURRENT_TIMESTAMP"),
     )
 
 
@@ -53,28 +59,28 @@ class Location(Base):
 
     id: Mapped[int] = mapped_column(
         Integer,
-        primary_key=True
+        primary_key=True,
     )
 
     name: Mapped[str] = mapped_column(
         String(100),
-        nullable=False
+        nullable=False,
     )
 
     latitude: Mapped[float] = mapped_column(
         Float,
-        nullable=False
+        nullable=False,
     )
 
     longitude: Mapped[float] = mapped_column(
         Float,
-        nullable=False
+        nullable=False,
     )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
-        default=datetime.utcnow
+        server_default=text("CURRENT_TIMESTAMP"),
     )
 
 
@@ -87,47 +93,47 @@ class WeatherObservation(Base):
 
     id: Mapped[int] = mapped_column(
         Integer,
-        primary_key=True
+        primary_key=True,
     )
 
     location_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey(
             "locations.id",
-            ondelete="CASCADE"
+            ondelete="CASCADE",
         ),
-        nullable=False
+        nullable=False,
     )
 
     temperature: Mapped[float] = mapped_column(
         Float,
-        nullable=False
+        nullable=False,
     )
 
     humidity: Mapped[float] = mapped_column(
         Float,
-        nullable=False
+        nullable=False,
     )
 
     wind_speed: Mapped[float] = mapped_column(
         Float,
-        nullable=False
+        nullable=False,
     )
 
     weather_condition: Mapped[str] = mapped_column(
         String(100),
-        nullable=False
+        nullable=False,
     )
 
     observed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        nullable=False
+        nullable=False,
     )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
-        default=datetime.utcnow
+        server_default=text("CURRENT_TIMESTAMP"),
     )
 
 
@@ -140,36 +146,36 @@ class PipelineRun(Base):
 
     id: Mapped[int] = mapped_column(
         Integer,
-        primary_key=True
+        primary_key=True,
     )
 
     pipeline_name: Mapped[str] = mapped_column(
         String(100),
-        nullable=False
+        nullable=False,
     )
 
     status: Mapped[str] = mapped_column(
         String(20),
-        nullable=False
+        nullable=False,
     )
 
     started_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        nullable=False
+        nullable=False,
     )
 
     finished_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
-        nullable=True
+        nullable=True,
     )
 
     records_processed: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
-        default=0
+        default=0,
     )
 
     error_message: Mapped[str | None] = mapped_column(
         Text,
-        nullable=True
+        nullable=True,
     )

@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from sqlalchemy import select, text
 
+from backend.app.auth import router as auth_router
 from backend.app.database import SessionLocal, engine
 from backend.app.models import Location
+from backend.app.pipeline_runs import router as pipeline_runs_router
 from backend.app.schemas import LocationCreate, LocationResponse
 from backend.app.weather import router as weather_router
-from backend.app.pipeline_runs import router as pipeline_runs_router
 
 
 app = FastAPI(
@@ -91,3 +92,10 @@ app.include_router(weather_router)
 # ============================================================
 
 app.include_router(pipeline_runs_router)
+
+
+# ============================================================
+# AUTHENTICATION APIs
+# ============================================================
+
+app.include_router(auth_router)

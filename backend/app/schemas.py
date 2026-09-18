@@ -4,23 +4,54 @@ from pydantic import BaseModel, Field
 
 
 # ============================================================
+# AUTHENTICATION SCHEMAS
+# ============================================================
+
+class UserCreate(BaseModel):
+    email: str = Field(
+        min_length=5,
+        max_length=255,
+    )
+
+    password: str = Field(
+        min_length=8,
+        max_length=128,
+    )
+
+
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+
+
+# ============================================================
 # LOCATION SCHEMAS
 # ============================================================
 
 class LocationCreate(BaseModel):
     name: str = Field(
         min_length=1,
-        max_length=100
+        max_length=100,
     )
 
     latitude: float = Field(
         ge=-90,
-        le=90
+        le=90,
     )
 
     longitude: float = Field(
         ge=-180,
-        le=180
+        le=180,
     )
 
 
@@ -42,23 +73,23 @@ class LocationResponse(BaseModel):
 
 class WeatherObservationCreate(BaseModel):
     location_id: int = Field(
-        gt=0
+        gt=0,
     )
 
     temperature: float
 
     humidity: float = Field(
         ge=0,
-        le=100
+        le=100,
     )
 
     wind_speed: float = Field(
-        ge=0
+        ge=0,
     )
 
     weather_condition: str = Field(
         min_length=1,
-        max_length=100
+        max_length=100,
     )
 
     observed_at: datetime
@@ -86,12 +117,12 @@ class WeatherObservationResponse(BaseModel):
 class PipelineRunCreate(BaseModel):
     pipeline_name: str = Field(
         min_length=1,
-        max_length=100
+        max_length=100,
     )
 
     status: str = Field(
         min_length=1,
-        max_length=20
+        max_length=20,
     )
 
     started_at: datetime
@@ -100,7 +131,7 @@ class PipelineRunCreate(BaseModel):
 
     records_processed: int = Field(
         default=0,
-        ge=0
+        ge=0,
     )
 
     error_message: str | None = None
