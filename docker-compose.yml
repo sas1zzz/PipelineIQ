@@ -30,6 +30,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+      start_period: 5s
 
 
   # ==========================================================
@@ -39,11 +40,9 @@ services:
   backend:
     build:
       context: .
-
       dockerfile: backend/Dockerfile
 
     container_name: pipelineiq-backend
-
     restart: unless-stopped
 
     depends_on:
@@ -61,6 +60,19 @@ services:
     ports:
       - "8000:8000"
 
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
 
   # ==========================================================
   # AIRFLOW
@@ -71,7 +83,6 @@ services:
       context: ./airflow
 
     container_name: pipelineiq-airflow
-
     restart: unless-stopped
 
     depends_on:
