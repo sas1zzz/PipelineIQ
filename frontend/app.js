@@ -1,4 +1,7 @@
-﻿async function fetchJson(url) {
+﻿const DISPLAY_TIMEZONE = "Asia/Kolkata";
+
+
+async function fetchJson(url) {
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -16,7 +19,27 @@ function formatDate(value) {
         return "-";
     }
 
-    return new Date(value).toLocaleString();
+    return new Date(value).toLocaleString("en-IN", {
+        timeZone: DISPLAY_TIMEZONE,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    });
+}
+
+
+function formatTime(value) {
+    return new Date(value).toLocaleTimeString("en-IN", {
+        timeZone: DISPLAY_TIMEZONE,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    });
 }
 
 
@@ -49,6 +72,7 @@ async function loadDashboard() {
             fetchJson("/api/pipeline-runs")
         ]);
 
+
         // ----------------------------------------------------
         // SUMMARY CARDS
         // ----------------------------------------------------
@@ -60,8 +84,6 @@ async function loadDashboard() {
             weather.length;
 
 
-        // Only use the actual Airflow ETL runs for the
-        // "Last Pipeline" and "Records Processed" cards.
         const airflowRuns = pipelineRuns.filter(
             run => run.pipeline_name === "weather_airflow_etl"
         );
@@ -105,8 +127,12 @@ async function loadDashboard() {
         );
 
 
+        // ----------------------------------------------------
+        // LAST UPDATED
+        // ----------------------------------------------------
+
         document.getElementById("weatherUpdated").textContent =
-            `Updated ${new Date().toLocaleTimeString()}`;
+            `Updated ${formatTime(new Date())} IST`;
 
     } catch (error) {
         console.error(error);
@@ -126,6 +152,7 @@ function renderWeather(
     const container =
         document.getElementById("weatherTable");
 
+
     if (!weather.length) {
         container.innerHTML =
             "<p>No weather records found.</p>";
@@ -134,10 +161,6 @@ function renderWeather(
     }
 
 
-    // --------------------------------------------------------
-    // Create location lookup
-    // --------------------------------------------------------
-
     const locationMap = {};
 
     for (const location of locations) {
@@ -145,10 +168,6 @@ function renderWeather(
             location.name;
     }
 
-
-    // --------------------------------------------------------
-    // Keep only the newest observation for each location
-    // --------------------------------------------------------
 
     const latestByLocation = {};
 
@@ -167,10 +186,6 @@ function renderWeather(
         }
     }
 
-
-    // --------------------------------------------------------
-    // Render rows
-    // --------------------------------------------------------
 
     const rows =
         Object.values(latestByLocation)
@@ -225,7 +240,7 @@ function renderWeather(
                     <th>Humidity</th>
                     <th>Wind Speed</th>
                     <th>Condition</th>
-                    <th>Observed</th>
+                    <th>Observed (IST)</th>
                 </tr>
             </thead>
 
@@ -289,8 +304,8 @@ function renderPipelineRuns(runs) {
                     <th>Pipeline</th>
                     <th>Status</th>
                     <th>Records</th>
-                    <th>Started</th>
-                    <th>Finished</th>
+                    <th>Started (IST)</th>
+                    <th>Finished (IST)</th>
                 </tr>
             </thead>
 
@@ -303,7 +318,7 @@ function renderPipelineRuns(runs) {
 
 
 // ------------------------------------------------------------
-// BUTTON
+// REFRESH BUTTON
 // ------------------------------------------------------------
 
 document
@@ -322,7 +337,7 @@ loadDashboard();
 
 
 // ------------------------------------------------------------
-// AUTO REFRESH EVERY 60 SECONDS
+// AUTO REFRESH
 // ------------------------------------------------------------
 
 setInterval(
