@@ -1,34 +1,26 @@
-\# PipelineIQ
+| Technology     | Purpose                |
+
+| -------------- | ---------------------- |
+
+| Python         | Backend and ETL        |
+
+| FastAPI        | REST API               |
+
+| PostgreSQL     | Database               |
+
+| SQLAlchemy     | ORM                    |
+
+| Apache Airflow | Workflow orchestration |
+
+| Docker         | Containerization       |
+
+| JavaScript     | Dashboard              |
+
+| HTML/CSS       | Frontend               |
+
+| pytest         | Testing                |
+
+| GitHub Actions | CI                     |
 
 
-
-Airflow-orchestrated ETL pipeline that collects live data, processes it, stores it in PostgreSQL, and presents it through a web dashboard.
-
-
-
-\## Project Status
-
-
-
-🚧 Under development
-
-
-
-\## Planned Technology Stack
-
-
-
-\- Python
-
-\- FastAPI
-
-\- React
-
-\- PostgreSQL
-
-\- Apache Airflow
-
-\- Docker
-
-\- Git/GitHub
 
